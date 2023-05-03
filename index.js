@@ -2,23 +2,49 @@ const todoInput = document.querySelector("#todo__input");
 const todoBtn = document.querySelector(".todo__add");
 const todoList = document.querySelector(".todo__list");
 
+const savedTodos = JSON.parse(localStorage.getItem("todos")) || [];
+console.log(savedTodos);
+savedTodos.forEach((todo) => {
+  const li = document.createElement("li");
+  li.innerHTML = `
+        <input type="checkbox" ${todo.completed ? "checked" : ""} />
+        <span>${todo.text}</span>
+        <button>Видалити</button>
+        `;
+  todoList.appendChild(li);
+});
+
 todoBtn.addEventListener("click", (e) => {
   e.preventDefault();
   if (todoInput.value !== "") {
-    const todo = document.createElement("li");
-    todo.innerHTML = `
+    const todo = {
+      text:todoInput.value,
+      completed : false
+    }
+    let li = document.createElement("li");
+    li.innerHTML = `
         <input type="checkbox" />
         <span>${todoInput.value}</span>
         <button>Видалити</button>
         `;
-    todoList.appendChild(todo);
-    console.log(todoInput.value);
+    todoList.appendChild(li);
+    savedTodos.push(todo)
+    localStorage.setItem("todos",JSON.stringify(savedTodos))
     todoInput.value = "";
   }
 });
 todoList.addEventListener("click", (e) => {
   if (e.target.tagName === "BUTTON") {
-    e.target.parentNode.remove();
+    const li = e.target.parentNode
+    const index = Array.prototype.indexOf.call(todoList.children,li)
+    savedTodos.splice(index,1)
+    localStorage.setItem("todos",JSON.stringify(savedTodos))
+    li.remove();
+  }else if(e.target.tagName === "INPUT"){
+    const li = e.target.parentNode
+    const index = Array.prototype.indexOf.call(todoList.children,li)
+    savedTodos[index].completed = e.target.checked
+    localStorage.setItem("todos",JSON.stringify(savedTodos))
   }
+  
 });
-console.log(todoInput, todoBtn, todoList);
