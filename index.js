@@ -1,67 +1,82 @@
 const todoInput = document.querySelector("#todo__input");
 const todoBtn = document.querySelector(".todo__add");
 const todoList = document.querySelector(".todo__list");
-// const checkbox = document.querySelectorAll(".checkbox");
 
 const savedTodos = JSON.parse(localStorage.getItem("todos")) || [];
-console.log(savedTodos);
-savedTodos.forEach((todo) => {
+
+function createTodoElement(todo) {
   const li = document.createElement("li");
-  todo.completed ? li.classList.add("span") : li.classList.remove("span");
+  li.dataset.id = todo.id;
+  li.classList.toggle("checked", todo.completed);
   li.innerHTML = `
-        <input type="checkbox"  class="checkbox " ${
-          todo.completed ? "checked" : ""
-        } />
-        <span >${todo.text}</span>
-        <button class="btn">Видалити</button>
-        `;
-  todoList.appendChild(li);
-});
+      <input type="checkbox" class="checkbox" ${todo.completed ? "checked" : ""} />
+      <span>${todo.text}</span>
+      <button class="btn"><img src="./static/delete.svg" alt="delete"></button>
+  `;
+  return li;
+}
+
+function renderTodos() {
+  todoList.innerHTML = "";
+
+  savedTodos.forEach((todo) => {
+    const todoElement = createTodoElement(todo);
+    todoList.appendChild(todoElement);
+  });
+
+  todoList.classList.toggle('show', savedTodos.length > 0);
+}
 
 todoBtn.addEventListener("click", (e) => {
   e.preventDefault();
   if (todoInput.value !== "") {
     const todo = {
+      id: Date.now().toString(),
       text: todoInput.value,
       completed: false,
     };
-    let li = document.createElement("li");
-    li.innerHTML = `
-        <input type="checkbox" class="checkbox" />
-        <span>${todoInput.value}</span>
-        <button>Видалити</button>
-        `;
-    todoList.appendChild(li);
+
     savedTodos.push(todo);
     localStorage.setItem("todos", JSON.stringify(savedTodos));
     todoInput.value = "";
+    renderTodos();
+    todoInput.focus();
   }
 });
-todoList.addEventListener("click", (e) => {
-  if (e.target.tagName === "BUTTON") {
-    const li = e.target.parentNode;
-    const index = Array.prototype.indexOf.call(todoList.children, li);
-    savedTodos.splice(index, 1);
-    localStorage.setItem("todos", JSON.stringify(savedTodos));
-    li.remove();
-  } else if (e.target.tagName === "INPUT") {
-    const li = e.target.parentNode;
-    const index = Array.prototype.indexOf.call(todoList.children, li);
+
+todoList.addEventListener("change", (e) => {
+  if (e.target.classList.contains("checkbox")) {
+    const li = e.target.closest("li");
+    const id = li.dataset.id;
+    const index = savedTodos.findIndex((todo) => todo.id === id);
     savedTodos[index].completed = e.target.checked;
     localStorage.setItem("todos", JSON.stringify(savedTodos));
-    // li.classList.toggle("span");
-    // console.log("checkbox", checkbox);
-    // checkbox.forEach((i) => {
-    //    i.checked ? i.classList.add("span") : i.classList.remove("span");
-    //   i.checked ? console.log("true") : console.log("flase");
-    // });
-    // if (e.target.checked) {
-    //   span.style.textDecoration = "line-through";
-    // } else {
-    //   span.style.textDecoration = "none";
-    // }
-    const input = e.target.checked;
-    console.log(input);
-    input ? li.classList.add("span") : li.classList.remove("span");
+
+    setTimeout(() => {
+      renderTodos();
+      li.classList.toggle("checked", e.target.checked);
+    }, 10);
   }
 });
+
+todoList.addEventListener("click", (e) => {
+  if (e.target.tagName === "IMG") {
+    const li = e.target.closest("li");
+    const id = li.dataset.id;
+    savedTodos.splice(savedTodos.findIndex(todo => todo.id === id), 1);
+    localStorage.setItem("todos", JSON.stringify(savedTodos));
+
+    setTimeout(() => {
+      renderTodos();
+    }, 10);
+  }
+});
+
+todoInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    todoBtn.click();
+  }
+});
+
+renderTodos();

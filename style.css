@@ -21,7 +21,10 @@
     max-width: 100%;
     height: auto;
 }
-
+body{
+  background-color: rgb(236, 251, 249);
+  font-family: 'Roboto', sans-serif;
+}
 
 form, label, input {
     font-size: var(--text);
@@ -66,38 +69,67 @@ button{}
         --button-text: 18px;
     }
 }
+.todo{
+  padding-top: 40px;
+}
 .todo__title{
+  
   text-align: center;
   font-size: var(--h1);
   margin-bottom: 30px;
 }
 .todo__form{
-  display: flex;
+  
   margin-bottom: 50px;
+  display: flex;
 }
 #todo__input{
   padding: 10px;
   flex-grow: 1;
-  margin-right: 15px;
-  outline: #46f07f;
+
+  outline: none;
+  border-radius:10px ;
+  border: 1px solid rgb(1,1,1,10%);
+  
 }
 
 .todo__add{
- padding: 10px;
- background-color: var(--green);
+ padding: 10px 15px;
+ background-color: #fa8627;
  color: var(--white);
  font-size: var(--text);
  cursor: pointer;
  border:none;
+ border-radius: 10px 10px 10px 10px;
+ margin-left: -20px;
 }
-.todo__list li{
+.todo__list{
+  background-color: #fff;
+  padding: 10px 10px ;
+  border-radius: 10px;
+  display: none;
+  flex-direction: column-reverse;
+  gap: 10px;
+}
+.show{
+  display: flex;
+}
+.todo__list li {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
   padding: 5px;
-  border: 1px solid #ccc;
+  
+  background-color: rgba(181, 222, 222, 0.338);
+  border-radius: 10px;
+  opacity: 1; 
+  transition: opacity 7s ease; 
+}
+
+.todo__list li.checked {
+  opacity: 0.6; 
   
 }
+
 .span span{
 
   text-decoration: line-through;
@@ -105,14 +137,26 @@ button{}
 }
 
 .todo__list li span{
-  flex-grow: 1;
+  max-width: 500px ;
+  width: 100%;
 }
 .todo__list li span::first-letter{
   text-transform: uppercase;
 }
+.todo__list li button{
+  text-decoration: none;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+.todo__list li button img{
+  display: block;
+  height: 30px;
+  width: 30px;
+  cursor: pointer;
+  
+}
 .todo__list li input[type="checkbox"]{
   margin-right: 10px;
-}
-.btn{
-  text-decoration: none !important; 
+  cursor: pointer;
 }
